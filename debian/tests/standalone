@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e
+
+pkg=simde
+
+PKG_CONFIG="${PKG_CONFIG:-pkg-config}"
+
+export LC_ALL=C.UTF-8
+if [ "${AUTOPKGTEST_TMP}" = "" ] ; then
+  AUTOPKGTEST_TMP=$(mktemp -d /tmp/${pkg}-test.XXXXXX)
+  # Double quote below to expand the temporary directory variable now versus
+  # later is on purpose.
+  # shellcheck disable=SC2064
+  trap "rm -rf ${AUTOPKGTEST_TMP}" 0 INT QUIT ABRT PIPE TERM
+fi
+
+cd "${AUTOPKGTEST_TMP}"
+
+if [ "$(dpkg-architecture -qDEB_HOST_ARCH)" = "i386" ] ; then
+  CFLAGS=-Wno-psabi
+fi
+
+cat > test.c <<EOM
+      #include <assert.h>
+      #include <simde/arm/neon.h>
+      #include <simde/x86/sse2.h>
+      int main() {
+        int64_t a = 1, b = 2;
+        assert(simde_vaddd_s64(a, b) == 3);
+        simde__m128i z = simde_mm_setzero_si128();
+        simde__m128i v = simde_mm_undefined_si128();
+        v = simde_mm_xor_si128(v, v);
+        assert(simde_mm_movemask_epi8(simde_mm_cmpeq_epi8(v, z)) == 0xFFFF);
+        return 0;
+      }
+EOM
+
+cc $("${PKG_CONFIG}" simde --cflags) ${CFLAGS} test.c -o test
+./test

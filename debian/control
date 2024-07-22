@@ -1,15 +1,58 @@
-Source: template-repository
-Section: unknown
+Source: simde
+Maintainer: Debian Med Packaging Team <debian-med-packaging@lists.alioth.debian.org>
+Uploaders: Michael R. Crusoe <crusoe@debian.org>
+Section: libdevel
 Priority: optional
-Maintainer: Tsic404 <liuheng@deepin.org>
-Build-Depends: debhelper (>= 11)
-Standards-Version: 4.1.3
-Homepage: https://github.com/deepin-community/template-repository
-#Vcs-Browser: https://salsa.debian.org/debian/deepin-community-template-repository
-#Vcs-Git: https://salsa.debian.org/debian/deepin-community-template-repository.git
+Build-Depends: debhelper-compat (= 13),
+               meson,
+               ninja-build
+#              clang [!i386 !alpha !hppa !ia64 !kfreebsd-amd64 !kfreebsd-i386 !m68k !sh4 !x32] <!nocheck>
+Standards-Version: 4.6.2
+Vcs-Browser: https://salsa.debian.org/med-team/simde
+Vcs-Git: https://salsa.debian.org/med-team/simde.git
+Homepage: https://github.com/simd-everywhere/simde
+Rules-Requires-Root: no
 
-Package: template-repository
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Package: libsimde-dev
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends}
+Description: Implementations of SIMD instructions for all systems
+ SIMDe provides fast, portable implementations of SIMD intrinsics on hardware
+ which doesn't natively support them, such as calling SSE functions on ARM.
+ There is no performance penalty if the hardware supports the native
+ implementation (e.g., SSE/AVX runs at full speed on x86, NEON on ARM, etc.).
+ .
+ This makes porting code to other architectures much easier in a few key ways:
+ .
+ First, instead of forcing you to rewrite everything for each architecture,
+ SIMDe lets you get a port up and running almost effortlessly. You can then
+ start working on switching the most performance-critical sections to native
+ intrinsics, improving performance gradually. SIMDe lets (for example) SSE/AVX
+ and NEON code exist side-by-side, in the same implementation.
+ .
+ Second, SIMDe makes it easier to write code targeting ISA extensions you don't
+ have convenient access to. You can run NEON code on your x86 machine without an
+ emulator. Obviously you'll eventually want to test on the actual hardware
+ you're targeting, but for most development, SIMDe can provide a much easier
+ path.
+ .
+ SIMDe takes a very different approach from most other SIMD abstraction layers
+ in that it aims to expose the entire functionality of the underlying
+ instruction set. Instead of limiting functionality to the lowest common
+ denominator, SIMDe tries to minimize the amount of effort required to port
+ while still allowing you the space to optimize as needed.
+ .
+ The current focus is on writing complete portable implementations, though a
+ large number of functions already have accelerated implementations using one
+ (or more) of the following:
+ .
+     SIMD intrinsics from other ISA extensions (e.g., using NEON to implement
+ SSE).
+     Compiler-specific vector extensions and built-ins such as
+ __builtin_shufflevector and __builtin_convertvector
+     Compiler auto-vectorization hints, using:
+        OpenMP 4 SIMD
+        Cilk Plus
+        GCC loop-specific pragmas
+        clang pragma loop hint directives
