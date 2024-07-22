@@ -1,0 +1,6 @@
+Tests: standalone
+Depends: @, gcc, g++, pkgconf, dpkg-dev
+
+Tests: run-unit-test
+Depends: @, gcc, g++, meson, ninja-build, dpkg-dev
+Restrictions: allow-stderr

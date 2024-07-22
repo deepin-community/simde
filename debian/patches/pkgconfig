@@ -1,0 +1,16 @@
+Author: Michael R. Crusoe <crusoe@debian.org>
+Description: Add the OpenMP SIMD flags automatically
+Forwarded: not-needed
+
+These are supported by both GCC 4.9+ and Clang 6+
+
+--- simde.orig/meson.build
++++ simde/meson.build
+@@ -555,6 +555,7 @@
+     version : meson.project_version(),
+     name : 'SIMDe',
+     filebase : 'simde',
++    extra_cflags: ['-DSIMDE_ENABLE_OPENMP', '-fopenmp-simd'],
+     description : 'Portable SIMD wrapper library')
+ endif
+ 

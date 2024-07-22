@@ -1,5 +1,306 @@
-template-repository (1.0-1) unstable; urgency=medium
+simde (0.8.2-1) unstable; urgency=medium
 
-  * Initial release
+  * New upstream version
 
- -- Tsic404 <liuheng@deepin.org>  Sat, 28 Jan 2023 13:46:49 +0800
+ -- Michael R. Crusoe <crusoe@debian.org>  Thu, 02 May 2024 13:04:35 +0200
+
+simde (0.8.0-1) unstable; urgency=medium
+
+  * New upstream version
+  * drop two patches that were cherry-picked from upstream:
+    ppc64el_fixes & wasm_f64x2_pmin_altivec.
+  * Skip fpclass tests on i386.
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Thu, 14 Mar 2024 14:31:07 +0100
+
+simde (0.7.6-1) unstable; urgency=medium
+
+  * Upload 0.7.6-1 to 'unstable'.
+  * Document upstream source for ppc64el_fixes patch.
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Tue, 13 Jun 2023 12:05:05 +0200
+
+simde (0.7.6-0~0exp3) experimental; urgency=medium
+
+  * Install the pkg-config simde file in /usr/share/pkgconfig/,
+    not /usr/lib/<triplet>/pkgconfig/
+  * Autopkgtests: resume skipping some tests:
+     i386: avx512/dbsad
+     ppc64el: all tests pass
+     s390x: all tests pass
+  * d/rules: clean all the build directories
+  * d/rules: save testing time by skipping 'emul' tests
+  * Add another patch from upstream to fix ppc64el implementations of WASM
+    SIMD128 functions.
+  * pkg-config: drop "-Wno-psabi", too invasive
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Sat, 20 May 2023 09:32:48 +0200
+
+simde (0.7.6-0~0exp2) experimental; urgency=medium
+
+  * Autopkgtests control: use "@" so we get the same version of the
+    package the test is written for
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Fri, 19 May 2023 22:17:19 +0200
+
+simde (0.7.6-0~0exp1) experimental; urgency=medium
+
+  * Standalone test: use pkg-config
+  * pkg-config: Add "-Wno-psabi" (fixes standalone test for i386)
+                Don't pass "-O3" (even though we really recommend it)
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Fri, 19 May 2023 00:23:30 +0200
+
+simde (0.7.6-0~0exp0) experimental; urgency=medium
+
+  * New upstream version
+  * debian/test/standalone: Add standalone test from Homebrew
+  * Removed debian/install and -override_dh_auto_install, use meson to
+    install
+  * Patch pkg-config to automatically include the optimizaton CFLAGS:
+    "-DSIMDE_ENABLE_OPENMP -fopenmp-simd -O3"
+  * Added patch to fix tests on ppc64el
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Tue, 16 May 2023 19:06:25 +0200
+
+simde (0.7.4+really0.7.4-0exp0) experimental; urgency=medium
+
+  * Whoops, meant to upload to experimental. Try #2
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Fri, 05 May 2023 14:51:13 +0200
+
+simde (0.7.4-0~0exp0) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Fri, 05 May 2023 07:56:44 +0200
+
+simde (0.7.4~rc4-0exp) experimental; urgency=medium
+
+  * New upstream version
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Thu, 04 May 2023 00:08:20 +0200
+
+simde (0.7.4+really0.7.4~rc2-1) unstable; urgency=medium
+
+  * Revert accidental upload of 0.7.4 final to unstable.
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Fri, 05 May 2023 13:16:46 +0200
+
+simde (0.7.4~rc2-2) unstable; urgency=medium
+
+  * Autopkgtest s390x: skip arm/neon/qdmulh*
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Tue, 14 Feb 2023 18:54:32 +0100
+
+simde (0.7.4~rc2-1) unstable; urgency=medium
+
+  * Build & test with default gcc version.  Closes: #1023687, #1002223
+  * New upstream version. Closes: #1030577
+  * Skip dbsad tests on i686, known failure. Closes: #102124
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Sun, 12 Feb 2023 19:29:01 +0100
+
+simde (0.7.4~rc1-1) unstable; urgency=medium
+
+  * watch: switch to Git mode to avoid GitHub release page changes.
+  * New upstream version
+  * Standards-Version: 4.6.2 (routine-update)
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Thu, 02 Feb 2023 19:18:54 +0100
+
+simde (0.7.2-6) unstable; urgency=medium
+
+  * Team Upload.
+  * d/rules: Skip testing on clang for now to get package building
+
+ -- Nilesh Patra <nilesh@debian.org>  Mon, 10 Jan 2022 18:10:36 +0530
+
+simde (0.7.2-5) unstable; urgency=medium
+
+  * Testing: use g{cc,++}-10 until we there is a new release of SIMDe
+    with the better GCC 11 support already available upstream.
+    Closes: #996281
+  * Fix watchfile to detect new versions on github
+  * Standards-Version: 4.6.0 (routine-update)
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Wed, 13 Oct 2021 10:48:30 +0200
+
+simde (0.7.2-4) unstable; urgency=medium
+
+  * debian/control: requires meson >= 0.54. Closes: #983094
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Fri, 19 Feb 2021 11:19:59 +0100
+
+simde (0.7.2-3) unstable; urgency=high
+
+  * Autopkgtests: skip known failure of x86/avx512/madd on s390x
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Tue, 26 Jan 2021 11:03:28 +0100
+
+simde (0.7.2-2) unstable; urgency=high
+
+  * Autopkgtests: drop clang, simplify deps. Closes: #971429
+  * Skip build-time testing with clang on i386 due to known bug.
+  * Freshen debian/copyright
+  * Remove cruft from debian/watch
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Mon, 25 Jan 2021 10:01:52 +0100
+
+simde (0.7.2-1) unstable; urgency=medium
+
+  * New upstream version
+  * debian/tests/run-test: make the autopkgtest compilation verbose
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Sun, 24 Jan 2021 19:28:30 +0100
+
+simde (0.7.0-2) unstable; urgency=medium
+
+  * Use meson in the autopkgtests, just like during the build, as cmake is
+    deprecated for building the tests.
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Thu, 31 Dec 2020 20:09:04 +0100
+
+simde (0.7.0-1) unstable; urgency=medium
+
+  * debian/watch: only find non-release candidates.
+  * New upstream version
+  * Standards-Version: 4.5.1 (routine-update)
+  * All patches removed except munit, they are no longer needed.
+  * Switch to meson/ninja for build+test
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Sun, 27 Dec 2020 14:18:39 +0100
+
+simde (0.6.0-3) unstable; urgency=medium
+
+  * Add patch for better altivec support from upstream.
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Fri, 04 Sep 2020 10:39:45 +0200
+
+simde (0.6.0-2) unstable; urgency=medium
+
+  * Add two patches for 32bit x86 from upstream.
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Wed, 02 Sep 2020 11:39:33 +0200
+
+simde (0.6.0-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Mon, 24 Aug 2020 17:50:12 +0200
+
+simde (0.5.0-1) unstable; urgency=medium
+
+  * New upstream version
+  * debhelper-compat 13 (routine-update)
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Tue, 23 Jun 2020 13:24:06 +0200
+
+simde (0.0.0.git.20200620-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Sat, 20 Jun 2020 15:35:52 +0200
+
+simde (0.0.0.git.20200619.2.5fb12ac-1) unstable; urgency=medium
+
+  * New upstream version with fix for plink2 on ppc64el
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Sat, 20 Jun 2020 09:55:06 +0200
+
+simde (0.0.0.git.20200619-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Fri, 19 Jun 2020 12:31:07 +0200
+
+simde (0.0.0.git.20200616-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Wed, 17 Jun 2020 11:18:22 +0200
+
+simde (0.0.0.git.20200611-1) unstable; urgency=medium
+
+  * New upstream version
+  * Refresh munit patch
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Thu, 11 Jun 2020 10:29:43 +0200
+
+simde (0.0.0.git.20200531-1) unstable; urgency=medium
+
+  * New upstream version. Closes: #961599.
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Mon, 01 Jun 2020 19:49:33 +0200
+
+simde (0.0.0.git.20200526-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Michael R. Crusoe <michael.crusoe@gmail.com>  Tue, 26 May 2020 10:43:34 +0200
+
+simde (0.0.0.git.20200522-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Michael R. Crusoe <michael.crusoe@gmail.com>  Fri, 22 May 2020 21:54:08 +0200
+
+simde (0.0.0.git.20200424-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Michael R. Crusoe <michael.crusoe@gmail.com>  Fri, 24 Apr 2020 18:50:02 +0200
+
+simde (0.0.0.git.20200421-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Michael R. Crusoe <michael.crusoe@gmail.com>  Tue, 21 Apr 2020 18:26:12 +0200
+
+simde (0.0.0.git.20200419-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Michael R. Crusoe <michael.crusoe@gmail.com>  Sun, 19 Apr 2020 21:34:54 +0200
+
+simde (0.0.0.git.20200415-1) unstable; urgency=medium
+
+  * Disable clang on ppc64
+  * Release as arch: all
+  * New upstream version
+
+ -- Michael R. Crusoe <michael.crusoe@gmail.com>  Thu, 16 Apr 2020 16:15:35 +0200
+
+simde (0.0.0.git.20200414-1) unstable; urgency=medium
+
+  * Fix clang skip logic
+  * New upstream version
+
+ -- Michael R. Crusoe <michael.crusoe@gmail.com>  Tue, 14 Apr 2020 11:51:26 +0200
+
+simde (0.0.0.git.20200412-1) unstable; urgency=medium
+
+  * New upstream version
+  * Parallelize building in the autopkgtests
+  * debian/{control,rules}: skip clang where it is not available
+  * debian/rules: armel: add -latomic
+
+ -- Michael R. Crusoe <michael.crusoe@gmail.com>  Mon, 13 Apr 2020 09:35:08 +0200
+
+simde (0.0.0.git.20200408-1) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Michael R. Crusoe ]
+  * New upstream version
+
+  [ Andreas Tille ]
+  * Test-Depends: build-essential
+
+ -- Andreas Tille <tille@debian.org>  Mon, 13 Apr 2020 07:33:38 +0200
+
+simde (0.0.0.git.20200402-1) unstable; urgency=medium
+
+  * Initial release. (Closes: #946299)
+
+ -- Michael R. Crusoe <michael.crusoe@gmail.com>  Thu, 02 Apr 2020 09:53:54 +0200

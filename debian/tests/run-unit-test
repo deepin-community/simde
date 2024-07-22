@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e
+
+pkg=simde
+
+export LC_ALL=C.UTF-8
+if [ "${AUTOPKGTEST_TMP}" = "" ] ; then
+  AUTOPKGTEST_TMP=$(mktemp -d /tmp/${pkg}-test.XXXXXX)
+  # Double quote below to expand the temporary directory variable now versus
+  # later is on purpose.
+  # shellcheck disable=SC2064
+  trap "rm -rf ${AUTOPKGTEST_TMP}" 0 INT QUIT ABRT PIPE TERM
+fi
+
+SOURCE=$PWD
+
+cd "${AUTOPKGTEST_TMP}"
+
+cp -r /usr/include/simde ./
+cp -r ${SOURCE}/test ./
+cp -r ${SOURCE}/meson* ./
+
+if [ "$(dpkg-architecture -qDEB_HOST_ARCH)" = "i386" ] ; then
+  # https://github.com/simd-everywhere/simde/issues/867
+  sed -i "/'dbsad'/d" meson.build
+  sed -i "/'fpclass'/d" meson.build
+  rm -f test/x86/avx512/dbsad.c
+  rm -f test/x86/avx512/fpclass.c
+fi
+
+mkdir build-gcc build-clang
+
+cd build-gcc
+CC=gcc CXX=g++ meson ..
+meson test --print-errorlogs $(meson test --list | grep -v emul)
+
+# cd ../build-clang
+# CC=clang CXX=clang++ meson ..
+# meson test --print-errorlogs $(meson test --list | grep -v emul)

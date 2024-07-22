@@ -1,4 +1,72 @@
 #!/usr/bin/make -f
 
+# DH_VERBOSE := 1
+export LC_ALL=C.UTF-8
+
+CLANG_SKIP=i386 alpha hppa ia64 m68k sh4 x32
+# i386 is due to https://github.com/simd-everywhere/simde/issues/683
+# ppc64 is due to https://github.com/simd-everywhere/simde/issues/185
+
+include /usr/share/dpkg/default.mk
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+
+ifneq (,$(filter $(DEB_BUILD_ARCH),armel))
+  export DEB_LDFLAGS_MAINT_APPEND=-latomic
+endif
+ifneq (,$(filter $(DEB_BUILD_ARCH),i386))
+  export DEB_CFLAGS_MAINT_APPEND=-O0
+  export DEB_CXXFLAGS_MAINT_APPEND=-O0
+endif
+
 %:
-	dh $@
+	dh $@ --buildsystem=meson+ninja
+
+override_dh_auto_configure:
+	dh_auto_configure -- -Dtests=false --libdir=lib
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+  # ifeq (,$(filter $(DEB_HOST_ARCH),$(CLANG_SKIP)))
+	# CC=clang CXX=clang++ dh_auto_configure --builddirectory=clang_test
+  # endif
+# https://github.com/simd-everywhere/simde/issues/867
+ifneq (,$(filter $(DEB_BUILD_ARCH),i386))
+	sed -i "/'dbsad'/d" meson.build
+	sed -i "/'fpclass'/d" meson.build
+	rm -f test/x86/avx512/dbsad.c
+	rm -f test/x86/avx512/fpclass.c
+endif
+# According to https://wiki.debian.org/ArchitectureSpecificsMemo#Architecture_baselines
+# It is odd that gcc doesn't include this automatically, but clang does
+ifneq (,$(filter $(DEB_BUILD_ARCH),ppc64))
+	export DEB_CFLAGS_MAINT_APPEND=-maltivec
+	export DEB_CXXFLAGS_MAINT_APPEND=-maltivec
+endif
+	CC=gcc CXX=g++ dh_auto_configure --builddirectory=gcc_test
+endif
+
+override_dh_auto_build:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	dh_auto_build --builddirectory=gcc_test
+  # ifeq (,$(filter $(DEB_HOST_ARCH),$(CLANG_SKIP)))
+	# dh_auto_build --builddirectory=clang_test
+  # endif
+endif
+
+override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	dh_auto_test --builddirectory=gcc_test -- $(shell meson test -C gcc_test --list | grep -v emul)
+# Skip testing on clang for now owing to bug report #1002223
+#  ifeq (,$(filter $(DEB_HOST_ARCH),$(CLANG_SKIP)))
+#	dh_auto_test --builddirectory=clang_test -- $(shell meson test -C clang_test --list | grep -v emul)
+#  endif
+endif
+
+override_dh_auto_clean:
+	dh_auto_clean --builddirectory=gcc_test
+	dh_auto_clean --builddirectory=clang_test
+	dh_auto_clean
+
+override_dh_auto_install:
+	dh_auto_install
+	mkdir --parents debian/libsimde-dev/usr/share/
+	mv debian/libsimde-dev/usr/lib/pkgconfig debian/libsimde-dev/usr/share/
+	find debian/libsimde-dev -type d -empty -delete
