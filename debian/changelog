@@ -1,3 +1,25 @@
+simde (0.8.2-3) unstable; urgency=medium
+
+  * Team upload.
+  [ zhangdandan <zhangdandan@loongson.cn> ]
+  * Apply upstream PR: #1287 to fix another loongarch64 related failure of
+    reverse-dependencies (Closes: #1100017)
+
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Mon, 10 Mar 2025 23:01:38 +0100
+
+simde (0.8.2-2) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Dandan Zhang ]
+  * x86/sse.h: Fix type convert error for LSX.
+    - Applied-Upstream: master, https://github.com/simd-everywhere/simde/pull/1215
+  * x86/sse2.h: Add LSX support for sse2.h.
+    - Applied-Upstream: master, https://github.com/simd-everywhere/simde/pull/1236
+      (Closes: #1088545)
+ 
+ -- Gianfranco Costamagna <locutusofborg@debian.org>  Sat, 30 Nov 2024 09:55:14 +0100
+
 simde (0.8.2-1) unstable; urgency=medium
 
   * New upstream version

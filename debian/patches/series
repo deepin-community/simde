@@ -1,2 +1,5 @@
 munit
 pkgconfig
+simde-fix-type-convert-error-for-LSX.patch
+simde-add-LSX-support-for-sse2-header-file.patch
+simde-fix-loongarch64-gcc-build-failure.patch
